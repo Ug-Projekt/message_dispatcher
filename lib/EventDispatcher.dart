@@ -35,7 +35,7 @@ class MessageDefinition {
   final double version;
   MessageDefinition({required this.name, required this.version, required this.schema});
 }
-2
+
 class RawMessage {
   final String id;
   final MessageDefinition definition;
