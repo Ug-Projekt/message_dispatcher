@@ -1,0 +1,39 @@
+
+[
+  {
+    "age": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 150
+    },
+    "friends": {
+      "type": "array",
+      "minimumCount": 1,
+      "maximumCount": 999,
+      "itemSchema": {
+        "type": "customObject",
+        "nullable": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "age": {
+            "type": "integer",
+            "maximum": 150,
+            "minimum": 0
+          }
+        }
+      },
+      "values": [0, 1, 2]
+    }
+  },
+  {
+    "age": 65,
+    "friends": [
+      {
+        "name": "dsdas",
+        "age": 30
+      }
+    ]
+  }
+]
