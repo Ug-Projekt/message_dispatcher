@@ -36,9 +36,6 @@ class SharedDataSyncMessage extends RawMessage {
 class SharedDataRequestDataMessage extends RawMessage {
   static final DEFINITION = MessageDefinition(name: "Shared data request message", version: 0.1, schema: CustomObjectSchema(false, {}));
   SharedDataRequestDataMessage(String messageKey) : super(messageKey: messageKey, definition: DEFINITION);
-
-  @override
-  RawMessage cloneSelf() => SharedDataRequestDataMessage(messageKey);
 }
 
 abstract class SharedDataNode extends MessageNode {

@@ -45,9 +45,7 @@ class NodeErrorMessage extends RawMessage {
     this.data["errorMessage"] = this.errorMessage;
     this.data["stackTrace"] = this.stackTrace;
   }
-  @override
-  RawMessage cloneSelf() => NodeErrorMessage(node, dispatcher, errorMessage, stackTrace, messageKey);
-
+  
   factory NodeErrorMessage.fromRawMessage(RawMessage message) {
     final value = NodeErrorMessage(MetaData.fromMap(message.data["node"]), MetaData.fromMap(message.data["dispatcher"]), message.data["errorMessage"], message.data["stackTrace"], message.messageKey);
     value.sender = message.sender;
