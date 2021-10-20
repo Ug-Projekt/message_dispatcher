@@ -145,7 +145,7 @@ void main() {
                 "level": 1,
                 "gender": "Women",
                 "married": false,
-                "money": 3.0,
+                "money": 5.0,
                 "girlFriends":[]
               },
             ]
