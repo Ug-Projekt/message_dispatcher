@@ -57,8 +57,11 @@ abstract class SharedDataNode extends MessageNode {
     if (message.sender!.uuid == this.metaData.uuid) return;
     if (message.messageKey == "shared-data.$key.changed" || message.messageKey == "shared-data.$key.ready") {
       final changeMessage = SharedDataSyncMessage.fromRawMessage(message);
-      final shouldBeSync = changeMessage.dataVersion > this.dataVersion;
-      if (!shouldBeSync) return;
+      if (changeMessage.dataVersion == this.dataVersion) return;
+      if (changeMessage.dataVersion < this.dataVersion) {
+        this.notifySync();
+        return;
+      }
       this.data.clear();
       this.data.addAll(changeMessage.sharedData);
       this.dataVersion = changeMessage.dataVersion;
