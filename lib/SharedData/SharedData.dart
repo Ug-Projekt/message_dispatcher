@@ -72,7 +72,7 @@ abstract class SharedDataNode extends MessageNode {
       this.dispatch(message: SharedDataSyncMessage("shared-data.$key.ready", data, dataVersion));
     }
   }
-  void applyChanges(void Function(Map<String, dynamic>) modifier) {
+  void applyChanges(void Function(Map<String, dynamic> data) modifier) {
     modifier.call(data);
     _notifySync();
   }
