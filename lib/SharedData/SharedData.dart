@@ -59,7 +59,7 @@ abstract class SharedDataNode extends MessageNode {
       final changeMessage = SharedDataSyncMessage.fromRawMessage(message);
       if (changeMessage.dataVersion == this.dataVersion) return;
       if (changeMessage.dataVersion < this.dataVersion) {
-        this._notifySync();
+        this._notifySync(withIncrement: false);
         return;
       }
       this.data.clear();
@@ -76,8 +76,8 @@ abstract class SharedDataNode extends MessageNode {
     modifier.call(data);
     _notifySync();
   }
-  void _notifySync(){
-    dataVersion++;
+  void _notifySync({bool withIncrement = true}){
+    if (withIncrement) dataVersion++;
     final message = SharedDataSyncMessage("shared-data.$key.changed", data, dataVersion);
     this.dispatch(message: message);
   }
