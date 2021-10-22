@@ -59,7 +59,7 @@ abstract class SharedDataNode extends MessageNode {
       final changeMessage = SharedDataSyncMessage.fromRawMessage(message);
       if (changeMessage.dataVersion == this.dataVersion) return;
       if (changeMessage.dataVersion < this.dataVersion) {
-        this.notifySync();
+        this._notifySync();
         return;
       }
       this.data.clear();
@@ -72,7 +72,11 @@ abstract class SharedDataNode extends MessageNode {
       this.dispatch(message: SharedDataSyncMessage("shared-data.$key.ready", data, dataVersion));
     }
   }
-  void notifySync(){
+  void applyChanges([void Function(Map<String, dynamic>)? modifier = null]) {
+    modifier?.call(data);
+    _notifySync();
+  }
+  void _notifySync(){
     dataVersion++;
     final message = SharedDataSyncMessage("shared-data.$key.changed", data, dataVersion);
     this.dispatch(message: message);
