@@ -124,22 +124,22 @@ void main() {
     dispatcherA.connect(dataNodeA);
     dispatcherB.connect(dataNodeB);
     dispatcherC.connect(dataNodeC);
-
-    dataNodeA.data["name"] = "Hello";
-    dataNodeA.applyChanges();
+    dataNodeA.applyChanges((data) {
+      data["name"] = "Hello";
+    });
     expect(dataNodeC.data["name"], "Hello");
     expect(dataNodeB.data["name"], "Hello");
-    dataNodeB
-    ..data["name"] = "changed"
-    ..applyChanges();
+    dataNodeB.applyChanges((data){
+      data["name"] = "changed";
+    });
     expect(dataNodeC.data["name"], "changed");
     expect(dataNodeA.data["name"], "changed");
     final connectionD = dispatcherA.connect(dataNodeD);
     expect(dataNodeD.data["name"], "changed");
     connectionD.disconnect();
-    dataNodeC
-    ..data["name"] = "Changed to C"
-    ..applyChanges();
+    dataNodeC.applyChanges((data){
+      data["name"] = "Changed to C";
+    });
     dispatcherB.connect(dataNodeD);
     expect(dataNodeD.data["name"], "Changed to C");
   });
