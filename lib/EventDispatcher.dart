@@ -145,6 +145,7 @@ abstract class MessageDispatcher {
     final _sourceMessage = message;
     message = message.cloneSelf();
     message.sender = node.metaData;
+    // if (node is BridgeNode) message.sender = _sourceMessage.sender; else message.sender = node.metaData;
 
     final result = message.definition.schema.validate("yourMessage", message.data);
     if (!result.passed) throw MessageValidationException("Message validation failed because your message schema should be '${result.message}'");
@@ -235,6 +236,7 @@ extension DeepCopyListExtension<T> on List<T> {
       }
       if (element is Map) {
         _list.add(element.deepClone() as T);
+        return;
       }
       _list.add(element);
     });
