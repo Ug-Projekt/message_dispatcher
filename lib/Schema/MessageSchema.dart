@@ -181,6 +181,7 @@ class CustomObjectSchema extends ObjectSchema {
     final isMap = value is Map<String, dynamic> || value is Map<String, dynamic>?;
     if (!isMap) return ValidationResult.error("$propertyName.runtimeType == ${this.nullable ? "Map<String, dynamic>?" : "Map<String, dynamic>"} ");
     if (this.nullable == false && value == null) return ValidationResult.error("$propertyName != null");
+    if (this.nullable == true && value == null) return ValidationResult.passed();
     final map = value as Map<String, dynamic>;
     ValidationResult? result;
     for (final key in this.properties.keys) {
