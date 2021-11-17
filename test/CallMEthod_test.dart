@@ -12,14 +12,14 @@ Future<void> main() async {
   final dispatcher = _MyDispatcher();
   
   group("Test method call", (){
-    final methodCallerA = MethodCallBridge(MetaData(uuid: "6b644eb6-42cd-11ec-a581-cb31a87005eb", name: "MyBridge", author: "Dream-Lab software technologies"), {
+    final methodCallerA = MethodCallBridge("MyBridge", MetaData(uuid: "6b644eb6-42cd-11ec-a581-cb31a87005eb", name: "MyBridgeA", author: "Dream-Lab software technologies"), {
     "hello": (bridge, args)async {
       return {
         "result": await bridge.callMethod("hi", {"message": args["helloMessage"]})
       };
     }
   });
-  final methodCallerB = MethodCallBridge(MetaData(uuid: "8d72f73c-42cd-11ec-ac43-3bf7b79a3bf8", name: "MyBridge", author: "Dream-Lab software technologies"), {
+  final methodCallerB = MethodCallBridge("MyBridge", MetaData(uuid: "8d72f73c-42cd-11ec-ac43-3bf7b79a3bf8", name: "MyBridgeB", author: "Dream-Lab software technologies"), {
     "hi": (bridge, args)async {
       return {
         "result": "yes",

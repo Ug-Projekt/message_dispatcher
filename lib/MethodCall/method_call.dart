@@ -55,29 +55,31 @@ typedef MethodCallHandler = Future<Map<String, dynamic>> Function(MethodCallBrid
 class MethodCallBridge extends MessageNode {
   final Map<String, MethodCallHandler> _handlers = {};
   final Map<String, Completer<Map<String, dynamic>>> _request = {};
-  MethodCallBridge(MetaData metaData, Map<String, MethodCallHandler> handlers) : super(metaData, {
-    "MethodCall.Call-${metaData.name}.Request": MethodCallRequest.DEFINITION,
-    "MethodCall.Call-${metaData.name}.Response": MethodCallResponse.DEFINITION,
+  final String key;
+  MethodCallBridge(this.key, MetaData metaData, Map<String, MethodCallHandler> handlers) : super(metaData, {
+    "MethodCall.${key}.Request": MethodCallRequest.DEFINITION,
+    "MethodCall.${key}.Response": MethodCallResponse.DEFINITION,
   }, {
-    "MethodCall.Call-${metaData.name}.Request": MethodCallRequest.DEFINITION,
-    "MethodCall.Call-${metaData.name}.Response": MethodCallResponse.DEFINITION,
+    "MethodCall.${key}.Request": MethodCallRequest.DEFINITION,
+    "MethodCall.${key}.Response": MethodCallResponse.DEFINITION,
   }) {
     this._handlers.addAll(handlers);
   }
   @override
   void handle(RawMessage message) {
     if (message.sender?.uuid == this.metaData.uuid) return;
-    final responseKey = "MethodCall.Call-${metaData.name}.Response";
-    final requestKey = "MethodCall.Call-${metaData.name}.Request";
+    final responseKey = "MethodCall.${key}.Response";
+    final requestKey = "MethodCall.${key}.Request";
     if (message.messageKey == requestKey) {
       final request = MethodCallRequest.fromMessage(message);
       final handler = this._handlers[request.methodName];
       handler?.call(this, request.arguments).then((value) {
         this.dispatch(message: MethodCallResponse(responseKey, requestId: message.id, methodName: request.methodName, arguments: request.arguments, returns: value, error: null));
       }).catchError((error, stackTrace){
-        this.dispatch(message: MethodCallResponse(responseKey, requestId: message.id, methodName: request.methodName, arguments: request.arguments, returns: null, error: {error: error, stackTrace: stackTrace}));
+        this.dispatch(message: MethodCallResponse(responseKey, requestId: message.id, methodName: request.methodName, arguments: request.arguments, returns: null, error: {"error": error, "stackTrace": stackTrace}));
       });
-      if (handler == null) this.dispatch(message: MethodCallResponse(responseKey, requestId: message.id, methodName: request.methodName, arguments: request.arguments, returns: null, error: "handler ${request.methodName} is not found"));
+      //Because the dart is only one side, another side is kotlin, mybe this method not exists on dart side but it may exists kotlin side so we cannot throw an exception if handler is not found.
+      // if (handler == null) this.dispatch(message: MethodCallResponse(responseKey, requestId: message.id, methodName: request.methodName, arguments: request.arguments, returns: null, error: {"error": "handler ${request.methodName} is not found"}));
       return;
     }
     if (message.messageKey == responseKey) {
@@ -95,7 +97,7 @@ class MethodCallBridge extends MessageNode {
   }
   Future<Map<String, dynamic>> callMethod(String name, Map<String, dynamic> argument, {Duration? timeout = null}) async {
     timeout ??= Duration(seconds: 10);
-    final message = MethodCallRequest("MethodCall.Call-${this.metaData.name}.Request", methodName: name, arguments: argument);
+    final message = MethodCallRequest("MethodCall.${this.key}.Request", methodName: name, arguments: argument);
     this.dispatch(message: message);
     this._request[message.id] = Completer();
     return await this._request[message.id]!.future.timeout(timeout).catchError((error, stackTrace){
